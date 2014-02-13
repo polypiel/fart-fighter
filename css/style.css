@@ -1,0 +1,11 @@
+section#canvas-container {
+    margin: 50px auto;
+	background-color: grey;
+	width: 640px;
+	height: 480px;
+}
+
+canvas#canvas {
+	width: 100%;
+	height: 100%;
+}
