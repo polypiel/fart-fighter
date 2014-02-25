@@ -1,4 +1,4 @@
-# fart-fighter
+# Fart Fighter
 
 
 A street-fighter game inspired but with Terrance and Phillip as characters.

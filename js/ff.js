@@ -227,7 +227,6 @@ window.addEventListener("load",function() {
 			});
 		},
 		step: function(df) {
-			//console.log(-this.p.cx + ", " + -this.p.cy + ", " + this.p.w + ", " + this.p.h);
 			this.p.w = Math.max((this.p.per() * this.p.mw), 0) / 100;
 		},
 		draw: function(ctx) {
@@ -254,15 +253,18 @@ window.addEventListener("load",function() {
 
 		init: function(p) {
 			this._super(p, {
-				time: this.MAX_TIME
+				time: this.MAX_TIME,
+				renderAlways: true
 			});
 		},
 		step: function(dt) {
-			this.p.time -= dt;
+			if(this.p.time > 0) {
+				this.p.time -= dt;
+			}
 		},
 		draw: function(ctx) {
-			console.log(Math.floor(this.p.time));
-			ctx.font = "bold 32px Verdana";
+			//console.log(Math.floor(this.p.time));
+			ctx.font = "bold 32px Shoryuken";
 			ctx.textAlign = "center";
 			ctx.fillText(Math.floor(this.p.time)+'', 320, 50);
 		}

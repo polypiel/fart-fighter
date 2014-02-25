@@ -1,6 +1,17 @@
+@font-face {
+  font-family: 'Shoryuken';
+  src: url('fonts/Shoryuken.eot');
+  src: url('fonts/Shoryuken.woff') format('woff'),
+    url('fonts/Shoryuken.ttf') format('truetype'),
+    url('fonts/Shoryuken.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 section#canvas-container {
-    margin: 50px auto;
-	background-color: grey;
+  margin: 50px auto;
+	background-color: gray;
 	width: 640px;
 	height: 480px;
 }
