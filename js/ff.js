@@ -9,6 +9,7 @@ window.addEventListener("load",function() {
 	var STATE_STANDING = 0;
 	var STATE_DOWN = 1;
 	var STATE_JUMPING = 2;
+	var STATE_FARTING = 3;
 
 	var Q = Quintus({
 		development: true,
@@ -19,18 +20,27 @@ window.addEventListener("load",function() {
 	}).include([Quintus.Sprites, Quintus.Scenes, Quintus.Input ]).setup("canvas");
 
 	// maps keys
+	/*
 	Q.input.keyboardControls({
 		UP: "up1",
 		RIGHT: "right1",
 		DOWN: "down1",
 		LEFT: "left1",
-		ACTION: "action1",
+		FIRE: "action1",
 	});
-	Q.input.bindKey(87, "up2"); // w
-	Q.input.bindKey(68, "right2"); // d
-	Q.input.bindKey(83, "down2"); // s
-	Q.input.bindKey(65, "left2"); //a
-	Q.input.bindKey(70, "action2"); // f
+*/
+	Q.input.keyboardControls({
+		38: "up1", // up
+		39: "right1", // right
+		40: "down1", // down
+		37: "left1", //left
+		17: "action1", // ctrl
+		87: "up2", // w
+		68: "right2", // d
+		83: "down2", // s
+		65: "left2", // a
+		70: "action2" // f
+	});
 
 	// BACKGROUND /////////////////////////////////////////////////////////////
 	Q.Sprite.extend("Background",{
@@ -53,6 +63,7 @@ window.addEventListener("load",function() {
 		SPEED_X: 20,
   	GAP_X: 60,
   	FART_POWER_INC: 15, // 20 fart points/sec
+  	FART_DELAY: 0.2, // 500ms
 
 		init: function(p) {
 			this._super(p, {
@@ -70,85 +81,96 @@ window.addEventListener("load",function() {
 				keyMod: (p.terrance ? "2" : "1"),
 				fartLock: false,
 				oponent: null,
-				state: STATE_STANDING
+				state: STATE_STANDING,
+				fartDelay: 0
 			});
 			// Listen for hit event and call the collision method
 			this.on("hit", this, "collision");
 		},
 		step: function(dt) {
-		  	//console.log('s: ' +this.p.state + ', y: ' +this.p.y + ', j:' + this.p.jump);
-		  	//console.log('f: ' + this.p.fart);
+			var p = this.p;
+		  //console.log('s: ' + p.state + ', y: ' + p.fartDelay);
+		  //console.log('f: ' + this.p.fart);
 
 			// incs fart power
-			if(this.p.fart < 100) {
-				this.p.fart_cont += dt;
-				var inc = this.p.fart_cont * this.FART_POWER_INC;
+			if(p.fart < 100) {
+				p.fart_cont += dt;
+				var inc = p.fart_cont * this.FART_POWER_INC;
 				var inc_f = Math.floor(inc);
-				this.p.fart_cont = (inc - inc_f) / this.FART_POWER_INC;
-			  this.p.fart += inc_f;
+				p.fart_cont = (inc - inc_f) / this.FART_POWER_INC;
+			  p.fart += inc_f;
 			} else {
-				this.p.fart_cont = 0;
+				p.fart_cont = 0;
 			}
 
 			// unlocks fire lock
-			if(this.p.fartLock && !this.key("action")) {
-			  this.p.fartLock = false;
+			if(p.fartLock && !this.key("action")) {
+			  p.fartLock = false;
 			}
 			// Collisions
 			this.stage.collide(this);
 
 			// Movement
-			if(this.p.state == STATE_STANDING) {
+			if(p.state == STATE_STANDING) {
 				this.setAsset(1);//this.asset(21, 1);
-				this.p.y = FLOOR_Y;
-				this.p.flip = (this.p.x > this.p.oponent.p.x) ? "x" : ""; // Facing
+				p.y = FLOOR_Y;
+				p.flip = (p.x > p.oponent.p.x) ? "x" : ""; // Facing
 
 				if(this.key('down')) {
-					this.p.state = STATE_DOWN;
+					p.state = STATE_DOWN;
 
 				} else {
-					if(this.key('right')) {this.p.x += this.SPEED_X;}
-					else if(this.key('left')) {this.p.x -= this.SPEED_X;}
+					if(this.key('right')) {p.x += this.SPEED_X;}
+					else if(this.key('left')) {p.x -= this.SPEED_X;}
 				}
 				if(this.key('up')) {
-					this.p.jump = FPS;
-					this.p.state = STATE_JUMPING;
-					if(this.key('right')) {this.p.jump_x = 5;}
-					else if(this.key('left')) {this.p.jump_x = -5;}
+					p.jump = FPS;
+					p.state = STATE_JUMPING;
+					if(this.key('right')) {p.jump_x = 5;}
+					else if(this.key('left')) {p.jump_x = -5;}
 				}
 
-			} else if(this.p.state == STATE_DOWN) {
+			} else if(p.state == STATE_DOWN) {
 				this.setAsset(4);
-				this.p.y = this.p.terrance ? FLOOR_BENDED_DOWN_T : FLOOR_BENDED_DOWN_P;
-				if(!this.key('down')) { this.p.state = STATE_STANDING; }
+				p.y = p.terrance ? FLOOR_BENDED_DOWN_T : FLOOR_BENDED_DOWN_P;
+				if(!this.key('down')) { p.state = STATE_STANDING; }
 
 			} else if(this.p.state == STATE_JUMPING) {
 				this.setAsset(2);
-				this.p.y -= this.p.jump;
-				this.p.x += this.p.jump_x;
-				this.p.jump--;
+				p.y -= this.p.jump;
+				p.x += this.p.jump_x;
+				p.jump--;
 
 				if(this.p.y >= FLOOR_Y) {
 					//console.log("land");
-					this.p.y = FLOOR_Y;
-					this.p.jump = 0;
-					this.p.jump_x = 0;
-					this.p.state = STATE_STANDING;
+					p.y = FLOOR_Y;
+					p.jump = 0;
+					p.jump_x = 0;
+					p.state = STATE_STANDING;
+				}
+
+			} else if(this.p.state == STATE_FARTING) {
+				this.setAsset(3);
+				p.fartDelay -= dt;
+				if(this.p.fartDelay < 0) {
+					p.fartDelay = 0;
+					p.state = STATE_STANDING;
 				}
 			}
 
 			// Farting
-			if(this.key("action") && this.p.fart >= 5 && !this.p.fartLock) {
-				// TODO
+			if(this.key("action") && p.fart >= 5 && !p.fartLock && p.state != STATE_FARTING) {
 				this.setAsset(3);
-				this.p.fartLock = true;
+				p.fartLock = true;
 				var fart = Q.stage().insert(new Q.Fart({player: this}));
-				this.p.fart -= fart.p.hitPower*4;
+				p.fart -= fart.p.hitPower*4;
+				p.state = STATE_FARTING;
+				p.fartDelay = this.FART_DELAY;
 			}
 
 			// Checks boundaries
-			if(this.p.x > 610) {this.p.x = 610;}
-			else if(this.p.x < 30) {this.p.x = 30;}
+			if(p.x > 610) {p.x = 610;}
+			else if(p.x < 30) {p.x = 30;}
 		},
 		collision: function(col) {
 			if(col.obj.p.player != this) {
@@ -163,8 +185,8 @@ window.addEventListener("load",function() {
 		 * Sets the asset given a number. It sets the proper asset for fighter
 		 */
 		setAsset: function(a) {
-		  	var a = '00' + this.curr(a+20, a);
-		  	this.p.asset = 'i' + (a.substring(a.length-3, a.length)) + '.png';
+	  	var a = '00' + this.curr(a+20, a);
+	  	this.p.asset = 'i' + (a.substring(a.length-3, a.length)) + '.png';
 		},
 		key: function(str) {
 			return Q.inputs[str + this.p.keyMod];
