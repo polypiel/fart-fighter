@@ -116,7 +116,7 @@
       if(this.key("action") && p.fart >= 5 && !p.fartLock && p.state != STATE_FARTING) {
         this.setAsset(3);
         p.fartLock = true;
-        var fart = Q.stage().insert(new Q.Fart({player: this}));
+        var fart = Q.stage().insert(new Q.Fart({player: p}));
         p.fart -= fart.p.hitPower*4;
         p.state = STATE_FARTING;
         p.fartDelay = this.FART_DELAY;
@@ -127,7 +127,7 @@
       else if(p.x < 30) {p.x = 30;}
     },
     collision: function(col) {
-      if(col.obj.p.player != this) {
+      if(col.obj.p.pid != this.p.id) {
         this.p.life -= col.obj.p.hitPower;
         col.obj.p.hitPower = 0;
         console.log('Collision: ' + col);
@@ -152,7 +152,7 @@
   // BACKGROUND /////////////////////////////////////////////////////////////
   Q.Sprite.extend("Background",{
     init: function(p) {
-      this._super(p,{
+      this._super(p, {
         x: 0,
         y: 0,
         cx: 0,
@@ -172,13 +172,14 @@
     init: function(p) {
       this._super(p, {
         asset: "i100.png",
-        y: p.player.p.y,
-        x: p.player.p.x,
         z: -5,
         type: Q.SPRITE_PARTICLE,
-
         hitPower: this.FART_POWER,
-        dir: 1,
+        x: p.player.x,
+        y: p.player.y,
+        flip: p.player.flip,
+        dir: p.player.flip == "" ? 1 : -1,
+        pid: p.player.id,
         age: 0
       });
       p.fart -= this.FART_POWER;
@@ -190,7 +191,7 @@
         return;
       }
 
-      this.p.x += this.DX;
+      this.p.x += this.p.dir*this.DX;
     }
   });
   // PLAYER SHADOW //////////////////////////////////////////////////////////
@@ -213,7 +214,8 @@
       this._super(p, {
         mw: p.w,
         cx: 0,
-        cy: 0
+        cy: 0,
+        inv: false
       });
     },
     step: function(df) {
@@ -234,7 +236,11 @@
       }
 
       ctx.fillStyle = p.color;
-      ctx.fillRect(-p.cx, -p.cy, p.w, p.h);
+      if(p.inv) {
+        ctx.fillRect(-p.cx, -p.cy, p.w, p.h);
+      } else {
+        ctx.fillRect(-p.cx + p.mw - p.w, -p.cy, p.w, p.h);
+      }
     }
   });
   // TIMER ////////////////////////////////////////////////////////////////////

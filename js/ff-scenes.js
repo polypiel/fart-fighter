@@ -13,8 +13,8 @@
     // bars
     stage.insert(new Q.Bar({x: 349, w:239, y: 19, h:20, color: "yellow", background: "red",   border: "white", per: function(){return phillip.p.life;}}));
     stage.insert(new Q.Bar({x: 349, w:239, y: 47, h:8,  color: "brown",  border:     "white", per: function(){return phillip.p.fart;}}));
-    stage.insert(new Q.Bar({x: 51,  w:239, y: 19, h:20, color: "yellow", background: "red",   border: "white", per: function(){return terrance.p.life;}}));
-    stage.insert(new Q.Bar({x: 51,  w:239, y: 47, h:8,  color: "brown",  border:     "white", per: function(){return terrance.p.fart;}}));
+    stage.insert(new Q.Bar({x: 51,  w:239, y: 19, h:20, color: "yellow", background: "red",   border: "white", per: function(){return terrance.p.life;}, inv: true}));
+    stage.insert(new Q.Bar({x: 51,  w:239, y: 47, h:8,  color: "brown",  border:     "white", per: function(){return terrance.p.fart;}, inv: true}));
 
     // timer
     stage.insert(new Q.Timer({}));
