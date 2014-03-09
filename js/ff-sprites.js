@@ -36,7 +36,8 @@
         fartLock: false,
         oponent: null,
         state: STATE_STANDING,
-        fartDelay: 0
+        fartDelay: 0,
+        back: false
       });
       // Listen for hit event and call the collision method
       this.on("hit", this, "collision");
@@ -69,13 +70,14 @@
         this.setAsset(1);//this.asset(21, 1);
         p.y = FLOOR_Y;
         p.flip = (p.x > p.oponent.p.x) ? "x" : ""; // Facing
+        p.back = false;
 
         if(this.key('down')) {
           p.state = STATE_DOWN;
 
         } else {
-          if(this.key('right')) {p.x += this.SPEED_X;}
-          else if(this.key('left')) {p.x -= this.SPEED_X;}
+          if(this.key('right')) {p.x += this.SPEED_X; p.back = (p.x > p.oponent.p.x);}
+          else if(this.key('left')) {p.x -= this.SPEED_X; p.back = !(p.x > p.oponent.p.x);}
         }
         if(this.key('up')) {
           p.jump = FPS;
@@ -91,11 +93,11 @@
 
       } else if(this.p.state == STATE_JUMPING) {
         this.setAsset(2);
-        p.y -= this.p.jump;
-        p.x += this.p.jump_x;
+        p.y -= p.jump;
+        p.x += p.jump_x;
         p.jump--;
 
-        if(this.p.y >= FLOOR_Y) {
+        if(p.y >= FLOOR_Y) {
           //console.log("land");
           p.y = FLOOR_Y;
           p.jump = 0;
@@ -103,10 +105,10 @@
           p.state = STATE_STANDING;
         }
 
-      } else if(this.p.state == STATE_FARTING) {
-        this.setAsset(3);
+      } else if(p.state == STATE_FARTING) {
+        this.setAsset(p.back ? 5 : 3);
         p.fartDelay -= dt;
-        if(this.p.fartDelay < 0) {
+        if(p.fartDelay < 0) {
           p.fartDelay = 0;
           p.state = STATE_STANDING;
         }
@@ -114,12 +116,14 @@
 
       // Farting
       if(this.key("action") && p.fart >= 5 && !p.fartLock && p.state != STATE_FARTING) {
-        this.setAsset(3);
+        //this.setAsset(3);
         p.fartLock = true;
         var fart = Q.stage().insert(new Q.Fart({player: p}));
-        p.fart -= fart.p.hitPower*4;
-        p.state = STATE_FARTING;
-        p.fartDelay = this.FART_DELAY;
+        p.fart -= fart.p.hitPower*4; // TODO
+        if(p.state == STATE_STANDING) {
+          p.state = STATE_FARTING;
+          p.fartDelay = this.FART_DELAY;
+        }
       }
 
       // Checks boundaries
