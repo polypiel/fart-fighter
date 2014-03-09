@@ -18,6 +18,7 @@
     GAP_X: 60,
     FART_POWER_INC: 15, // 20 fart points/sec
     FART_DELAY: 0.2, // 500ms
+    FART_HIT_POINTS: [4, 6, 3, 0],
 
     init: function(p) {
       this._super(p, {
@@ -118,8 +119,9 @@
       if(this.key("action") && p.fart >= 5 && !p.fartLock && p.state != STATE_FARTING) {
         //this.setAsset(3);
         p.fartLock = true;
-        var fart = Q.stage().insert(new Q.Fart({player: p}));
-        p.fart -= fart.p.hitPower*4; // TODO
+        var hp = this.FART_HIT_POINTS[p.state];
+        if(p.state == STATE_STANDING && p.back) {hp = this.FART_HIT_POINTS[STATE_DOWN];}
+        var fart = Q.stage().insert(new Q.Fart({player: p, hitPower: hp}));
         if(p.state == STATE_STANDING) {
           p.state = STATE_FARTING;
           p.fartDelay = this.FART_DELAY;
@@ -153,24 +155,9 @@
       return this.p.terrance ? val1 : val2;
     }
   });
-  // BACKGROUND /////////////////////////////////////////////////////////////
-  Q.Sprite.extend("Background",{
-    init: function(p) {
-      this._super(p, {
-        x: 0,
-        y: 0,
-        cx: 0,
-        cy: 0,
-        asset: 'i853.png',
-        type: 0,
-        jump: 0
-      });
-    }
-  });
   // FART ///////////////////////////////////////////////////////////////////
   Q.Sprite.extend("Fart", {
     DX: 4,
-    FART_POWER: 4,
     LIFE_SPAN: 0.75,
 
     init: function(p) {
@@ -178,7 +165,6 @@
         asset: "i100.png",
         z: -5,
         type: Q.SPRITE_PARTICLE,
-        hitPower: this.FART_POWER,
         x: p.player.x,
         y: p.player.y,
         flip: p.player.flip,
@@ -186,7 +172,7 @@
         pid: p.player.id,
         age: 0
       });
-      p.fart -= this.FART_POWER;
+      this.p.player.fart -= this.p.hitPower*3;
     },
     step: function(dt) {
       this.p.age += dt;
