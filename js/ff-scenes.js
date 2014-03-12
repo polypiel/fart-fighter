@@ -1,4 +1,20 @@
 ; Quintus.FfScenes = function(Q) {
+  // BACKGROUND /////////////////////////////////////////////////////////////
+  Q.Sprite.extend("Background",{
+    init: function(p) {
+      this._super(p, {
+        x: 0,
+        y: 0,
+        z: -10,
+        cx: 0,
+        cy: 0,
+        asset: 'i853.png',
+        type: 0,
+        jump: 0
+      });
+    }
+  });
+
   Q.scene("level1", function(stage) {
     var bg = stage.insert(new Q.Background({ type: Q.SPRITE_UI }));
     var terrance = stage.insert(new Q.Fighter({terrance: true}));
@@ -18,5 +34,5 @@
 
     // timer
     stage.insert(new Q.Timer({}));
-  });
+  }, {"sort": true});
 };
