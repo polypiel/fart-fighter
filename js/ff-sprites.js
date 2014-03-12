@@ -189,7 +189,7 @@
     init: function(p) {
       this._super(p, {
         y: FLOOR_Y + 90,
-        z: -10,
+        z: -6,
         asset: "i101.png"
       });
     },
@@ -205,6 +205,7 @@
         mw: p.w,
         cx: 0,
         cy: 0,
+        z: 5,
         inv: false
       });
     },
@@ -241,6 +242,7 @@
       this._super(p, {
         time: this.MAX_TIME,
         color: "#FF0000",
+        z: 5,
         renderAlways: true
       });
     },
