@@ -6,7 +6,7 @@ window.addEventListener("load",function() {
 		width: 640,
 		height: 480,
 
-	}).include([Quintus.Sprites, Quintus.Scenes, Quintus.Input ])
+	}).include([Quintus.Sprites, Quintus.Scenes, Quintus.Input, Quintus.UI ])
 	.include([Quintus.FfScenes, Quintus.FfSprites])
 	.setup("canvas");
 
@@ -26,8 +26,9 @@ window.addEventListener("load",function() {
 
 
 	// init
-	Q.load([ "i001.png", "i002.png", "i003.png", "i004.png", "i005.png", "i021.png", "i022.png", "i023.png", "i024.png",
-		"i025.png", "i100.png", "i101.png", "i853.png" ], function() {
+	Q.load([ "i001.png", "i002.png", "i003.png", "i004.png", "i005.png", "i006.png", "i007.png",
+		"i021.png", "i022.png", "i023.png", "i024.png",	"i025.png", "i026.png", "i027.png", "i100.png",
+		"i101.png", "i853.png" ], function() {
 
 		// start
 	  Q.stageScene("level1");

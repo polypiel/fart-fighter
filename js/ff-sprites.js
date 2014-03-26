@@ -38,7 +38,8 @@
         oponent: null,
         state: STATE_STANDING,
         fartDelay: 0,
-        back: false
+        back: false,
+        finished: false
       });
       // Listen for hit event and call the collision method
       this.on("hit", this, "collision");
@@ -47,6 +48,9 @@
       var p = this.p;
       //console.log('s: ' + p.state + ', y: ' + p.fartDelay);
       //console.log('f: ' + this.p.fart);
+
+      // Game Over
+      if(p.finished) { return; }
 
       // incs fart power
       if(p.fart < 100) {
@@ -141,6 +145,17 @@
     },
 
     // Helper functions
+    finish: function() {
+      var p = this.p;
+
+      p.finished = true;
+      if(p.life > p.oponent.p.life) {
+        this.setAsset(6); // victory
+      } else if(p.life < p.oponent.p.life) {
+        p.y =
+        this.setAsset(7); // defeat
+      }
+    },
     /*
      * Sets the asset given a number. It sets the proper asset for fighter
      */
@@ -236,7 +251,7 @@
   });
   // TIMER ////////////////////////////////////////////////////////////////////
   Q.Sprite.extend("Timer", {
-    MAX_TIME: 90.0,
+    MAX_TIME: 10.0,
 
     init: function(p) {
       this._super(p, {
@@ -249,6 +264,10 @@
     step: function(dt) {
       if(this.p.time > 0) {
         this.p.time -= dt;
+        if(this.p.time < 0) {
+          this.p.time = 0;
+          Q.stageScene(this.p.scene, 1);
+        }
       }
     },
     draw: function(ctx) {

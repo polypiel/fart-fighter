@@ -33,6 +33,18 @@
     stage.insert(new Q.Bar({x: 51,  w:239, y: 47, h:8,  color: "brown",  border:     "white", per: function(){return terrance.p.fart;}, inv: true}));
 
     // timer
-    stage.insert(new Q.Timer({}));
+    stage.insert(new Q.Timer({scene: "gameOver"}));
   }, {"sort": true});
+
+  Q.scene("gameOver", function(stage) {
+    Q("Fighter", 0).invoke("finish");
+
+    var label = stage.insert(new Q.UI.Text({
+      size: 64,
+      color: 'red',
+      x: Q.width/2,
+      y: Q.height/2,
+      label: "Game Over"
+    }));
+  });
 };
