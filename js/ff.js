@@ -1,4 +1,4 @@
-window.addEventListener("load",function() {
+window.addEventListener("load", function() {
 
 	var Q = Quintus({
 		development: true, // DEBUG

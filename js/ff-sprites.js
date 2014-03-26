@@ -152,7 +152,7 @@
       if(p.life > p.oponent.p.life) {
         this.setAsset(6); // victory
       } else if(p.life < p.oponent.p.life) {
-        p.y =
+        p.y = FLOOR_Y + 90;
         this.setAsset(7); // defeat
       }
     },
